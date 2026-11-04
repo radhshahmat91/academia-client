@@ -52,13 +52,12 @@ export function dayDistance(d?: string | number | Date | null) {
 }
 
 export const money = (n: number | null | undefined) => `৳${Math.round(n ?? 0).toLocaleString("en-US")}`;
-export const initials = (name?: string | null) =>
-  (name ?? "?")
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]!.toUpperCase())
-    .join("") || "?";
+const SMALL = new Set(["of", "and", "the", "to", "in", "for", "a", "an", "on", "at", "&"]);
+export const initials = (name?: string | null) => {
+  const words = (name ?? "?").split(/\s+/).filter(Boolean);
+  const big = words.filter((w) => !SMALL.has(w.toLowerCase()));
+  return (big.length ? big : words).slice(0, 2).map((p) => p[0]!.toUpperCase()).join("") || "?";
+};
 export const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 export const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n));
 export const sum = (a: number[]) => a.reduce((x, y) => x + y, 0);
@@ -79,3 +78,5 @@ export const safeNext = (next: string | null | undefined, fallback = "/dashboard
 /** Path prefixes that need a signed-in user. Mirrors proxy.ts */
 export const PRIVATE_RE = /^\/(dashboard|registration|my-courses|evaluation|fees|receipt|transport|messages|students|profile|notifications|admin)(\/|$)|^\/(courses|clubs|events)\/[^/]+/;
 export const isPrivatePath = (p: string) => PRIVATE_RE.test(p);
+
+export const pretty = (s: string) => s.replace(/[-_]+/g, " ").replace(/^./, (c) => c.toUpperCase());

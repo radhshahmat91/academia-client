@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Inbox, RefreshCw, Search, Star, TriangleAlert } from "lucide-react";
 import Link from "next/link";
-import { useId, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { cn, initials } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ headings */
@@ -132,22 +132,22 @@ export function Pagination({ page, pages, onChange }: { page: number; pages: num
   for (let p = 1; p <= pages; p++) if (p === 1 || p === pages || Math.abs(p - page) <= 1) items.push(p);
   else if (items[items.length - 1] !== "gap") items.push("gap");
   return (
-    <nav className="join mt-10 flex justify-center" aria-label="Pagination">
-      <button type="button" className="btn join-item" disabled={page <= 1} onClick={() => onChange(page - 1)} aria-label="Previous page">
+    <nav className="mt-10 flex flex-wrap items-center justify-center gap-1.5" aria-label="Pagination">
+      <button type="button" className="btn btn-square btn-ghost" disabled={page <= 1} onClick={() => onChange(page - 1)} aria-label="Previous page">
         <ChevronLeft className="size-4" />
       </button>
       {items.map((p, i) =>
         p === "gap" ? (
-          <span key={`g${i}`} className="btn join-item btn-disabled">
+          <span key={`g${i}`} className="px-1 text-base-content/50">
             …
           </span>
         ) : (
-          <button key={p} type="button" className={cn("btn join-item", p === page && "btn-primary")} onClick={() => onChange(p)} aria-current={p === page ? "page" : undefined}>
+          <button key={p} type="button" className={cn("btn btn-square", p === page ? "btn-primary" : "btn-ghost")} onClick={() => onChange(p)} aria-current={p === page ? "page" : undefined}>
             {p}
           </button>
         ),
       )}
-      <button type="button" className="btn join-item" disabled={page >= pages} onClick={() => onChange(page + 1)} aria-label="Next page">
+      <button type="button" className="btn btn-square btn-ghost" disabled={page >= pages} onClick={() => onChange(page + 1)} aria-label="Next page">
         <ChevronRight className="size-4" />
       </button>
     </nav>
@@ -170,11 +170,16 @@ export function Chips<T extends string>({ options, value, onChange, all = "All" 
 /* ------------------------------------------------------------------ small pieces */
 export function Avatar({ name, src, size = 40, online, className }: { name?: string | null; src?: string | null; size?: number; online?: boolean; className?: string }) {
   const [bad, setBad] = useState(false);
+  const img = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    const el = img.current;
+    if (el && el.complete && el.naturalWidth === 0) setBad(true);
+  }, [src]);
   return (
     <span className={cn("relative inline-block shrink-0", className)} style={{ width: size, height: size }}>
       {src && !bad ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt={name ?? "Profile photo"} referrerPolicy="no-referrer" onError={() => setBad(true)} className="size-full rounded-full object-cover ring-1 ring-base-content/10" />
+        <img ref={img} src={src} alt={name ?? "Profile photo"} referrerPolicy="no-referrer" onError={() => setBad(true)} className="size-full rounded-full object-cover ring-1 ring-base-content/10" />
       ) : (
         <span className="grid size-full place-items-center rounded-full bg-primary/12 font-bold text-primary ring-1 ring-primary/15" style={{ fontSize: size * 0.38 }}>
           {initials(name)}
@@ -268,5 +273,18 @@ export function Meter({ value, max = 100, tone = "primary", className }: { value
     <div className={cn("h-2 overflow-hidden rounded-full bg-base-content/10", className)} role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
       <motion.div className={cn("h-full rounded-full", fill)} initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.9, ease: "easeOut" }} />
     </div>
+  );
+}
+
+export function Select({ value, onChange, options, label, all, className }: { value: string; onChange: (v: string) => void; options: { value: string; label: string }[]; label: string; all?: string; className?: string }) {
+  return (
+    <select aria-label={label} className={cn("select w-full", className)} value={value} onChange={(e) => onChange(e.target.value)}>
+      {all !== undefined && <option value="">{all}</option>}
+      {options.map((o) => (
+        <option key={o.value} value={o.value}>
+          {o.label}
+        </option>
+      ))}
+    </select>
   );
 }

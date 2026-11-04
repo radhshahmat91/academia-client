@@ -1,6 +1,7 @@
 "use client";
 
-import { useId, useState, type ReactNode } from "react";
+import { ImageIcon } from "lucide-react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { cn, hash, initials } from "@/lib/utils";
 
 /** Repeating water lily (shapla) tile. Inherits the text colour, so tint it with text-* classes. */
@@ -50,12 +51,19 @@ type PhotoProps = {
 /** A fixed-ratio image that never leaves an empty box: if the picture fails, a branded gradient fills in. */
 export function Photo({ src, alt, className, ratio = "aspect-[16/10]", priority, zoom, children }: PhotoProps) {
   const [failed, setFailed] = useState(false);
+  const img = useRef<HTMLImageElement>(null);
   const grad = GRADIENTS[hash(alt) % GRADIENTS.length];
+  // A picture can fail before React attaches onError (server-rendered pages), so check once after mount too
+  useEffect(() => {
+    const el = img.current;
+    if (el && el.complete && el.naturalWidth === 0) setFailed(true);
+  }, [src]);
   return (
     <div className={cn("relative overflow-hidden bg-base-300", ratio, className)}>
       {src && !failed ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
+          ref={img}
           src={src}
           alt={alt}
           loading={priority ? "eager" : "lazy"}
@@ -67,7 +75,7 @@ export function Photo({ src, alt, className, ratio = "aspect-[16/10]", priority,
       ) : (
         <div role="img" aria-label={alt} className={cn("absolute inset-0 grid place-items-center bg-gradient-to-br", grad)}>
           <ShaplaPattern className="text-white/20" />
-          <span className="relative text-3xl font-bold tracking-tight text-white/85">{initials(alt)}</span>
+          {alt.trim().split(/\s+/).length <= 3 ? <span className="relative text-3xl font-bold tracking-tight text-white/85">{initials(alt)}</span> : <ImageIcon className="relative size-9 text-white/55" aria-hidden="true" />}
         </div>
       )}
       {children}

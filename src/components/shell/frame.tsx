@@ -29,7 +29,9 @@ export function Frame({ user, children }: { user: SessionUser | null; children: 
 
   if (!user && isPrivatePath(pathname)) return null;
 
-  const content = <PageFade key={pathname}>{children}</PageFade>;
+  // Marketing pages draw their own full-width sections; every other signed-out page sits in a centred column
+  const bleed = MARKETING.has(pathname);
+  const content = <PageFade key={pathname}>{!user && !bleed ? <div className="wrap py-10 sm:py-14">{children}</div> : children}</PageFade>;
 
   if (!user) {
     return (

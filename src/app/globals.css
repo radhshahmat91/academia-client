@@ -1,0 +1,280 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: false;
+  logs: false;
+}
+
+/* Light: shapla (water lily) on a soft paper green, marigold for emphasis */
+@plugin "daisyui/theme" {
+  name: "shapla";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
+  --color-base-100: #ffffff;
+  --color-base-200: #f3f6f2;
+  --color-base-300: #e1e9e2;
+  --color-base-content: #10231c;
+  --color-primary: #0b5d46;
+  --color-primary-content: #f2fbf6;
+  --color-secondary: #f2b01e;
+  --color-secondary-content: #2a1d00;
+  --color-accent: #c94f3a;
+  --color-accent-content: #fff5f2;
+  --color-neutral: #10231c;
+  --color-neutral-content: #e8f0ea;
+  --color-info: #2b79ad;
+  --color-info-content: #f1f8fd;
+  --color-success: #178a5c;
+  --color-success-content: #effcf6;
+  --color-warning: #e29a0b;
+  --color-warning-content: #2a1d00;
+  --color-error: #cf3f3f;
+  --color-error-content: #fff3f3;
+  --radius-selector: 0.75rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1.1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+/* Dark: the same garden after sunset */
+@plugin "daisyui/theme" {
+  name: "shapla-night";
+  default: false;
+  prefersdark: true;
+  color-scheme: dark;
+  --color-base-100: #0f1b17;
+  --color-base-200: #0a1411;
+  --color-base-300: #1a2a23;
+  --color-base-content: #e4eee8;
+  --color-primary: #3cc795;
+  --color-primary-content: #04211a;
+  --color-secondary: #f5b82e;
+  --color-secondary-content: #2a1d00;
+  --color-accent: #ef7d66;
+  --color-accent-content: #2b0c06;
+  --color-neutral: #1a2a23;
+  --color-neutral-content: #e4eee8;
+  --color-info: #62aedd;
+  --color-info-content: #07202f;
+  --color-success: #3dc58d;
+  --color-success-content: #05221a;
+  --color-warning: #f2b640;
+  --color-warning-content: #2a1d00;
+  --color-error: #f06b6b;
+  --color-error-content: #2e0808;
+  --radius-selector: 0.75rem;
+  --radius-field: 0.75rem;
+  --radius-box: 1.1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@custom-variant dark (&:where([data-theme="shapla-night"], [data-theme="shapla-night"] *));
+
+@theme {
+  --font-sans: "Anek Latin Variable", "Anek Bangla Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-bangla: "Anek Bangla Variable", "Anek Latin Variable", ui-sans-serif, sans-serif;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 11s ease-in-out infinite;
+  --animate-wiggle: wiggle 0.9s ease-in-out;
+  --animate-pop: pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+  --animate-drift: drift 40s linear infinite;
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(var(--r, 0deg));
+    }
+    50% {
+      transform: translateY(-14px) rotate(var(--r, 0deg));
+    }
+  }
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: rotate(0);
+    }
+    20% {
+      transform: rotate(-14deg);
+    }
+    40% {
+      transform: rotate(12deg);
+    }
+    60% {
+      transform: rotate(-8deg);
+    }
+    80% {
+      transform: rotate(5deg);
+    }
+  }
+  @keyframes pop {
+    0% {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  @keyframes drift {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-base-200);
+  color: var(--color-base-content);
+  font-feature-settings: "kern", "liga";
+  text-rendering: optimizeLegibility;
+  min-height: 100dvh;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-secondary) 55%, transparent);
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Headings share one voice across the whole site */
+.display {
+  font-weight: 760;
+  font-stretch: 108%;
+  letter-spacing: -0.022em;
+  line-height: 1.04;
+}
+.h-section {
+  font-weight: 720;
+  font-stretch: 106%;
+  letter-spacing: -0.018em;
+  line-height: 1.1;
+}
+.bangla {
+  font-family: var(--font-bangla);
+  font-stretch: 100%;
+}
+
+/* The matra: Bangla's headline stroke, used as the underline-from-above of every section title */
+.matra {
+  position: relative;
+  padding-top: 0.9rem;
+}
+.matra::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--color-secondary) 0 var(--matra, 56px),
+    color-mix(in oklab, var(--color-base-content) 16%, transparent) var(--matra, 56px) 100%
+  );
+}
+.matra-center::before {
+  inset-inline: 50% auto;
+  width: var(--matra, 56px);
+  translate: -50% 0;
+  background: var(--color-secondary);
+}
+
+.surface {
+  background: var(--color-base-100);
+  border: 1px solid color-mix(in oklab, var(--color-base-content) 9%, transparent);
+  border-radius: var(--radius-box);
+}
+.card-lift {
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s ease,
+    border-color 0.2s ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px -18px color-mix(in oklab, var(--color-primary) 35%, transparent);
+  border-color: color-mix(in oklab, var(--color-primary) 35%, transparent);
+}
+
+.glass {
+  background: color-mix(in oklab, var(--color-base-100) 78%, transparent);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+}
+
+.hero-glow {
+  background:
+    radial-gradient(60% 50% at 85% 10%, color-mix(in oklab, var(--color-secondary) 28%, transparent), transparent 70%),
+    radial-gradient(55% 55% at 5% 90%, color-mix(in oklab, var(--color-primary) 22%, transparent), transparent 70%);
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--color-base-content) 25%, transparent) transparent;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Every button gets the same press feel */
+.btn {
+  font-weight: 600;
+  transition:
+    transform 0.15s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  .print-sheet {
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.wrap {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2rem);
+}

@@ -220,7 +220,10 @@ export function StatCard({ icon, label, value, hint, tone = "primary", href }: {
   );
 }
 
-export const Pill = ({ tone = "primary", children, className }: { tone?: Tone; children: ReactNode; className?: string }) => <span className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold", tones[tone], className)}>{children}</span>;
+/** `glass` is for pills that sit on top of photos: solid frosted background, tone colour on the text only */
+export const Pill = ({ tone = "primary", children, className, glass }: { tone?: Tone; children: ReactNode; className?: string; glass?: boolean }) => (
+  <span className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold", glass ? `${tones[tone].split(" ").filter((c) => !c.startsWith("bg-")).join(" ")} bg-base-100/95 shadow-sm backdrop-blur` : tones[tone], className)}>{children}</span>
+);
 
 export function ProgressRing({ value, size = 96, stroke = 9, children, tone = "var(--color-primary)" }: { value: number; size?: number; stroke?: number; children?: ReactNode; tone?: string }) {
   const r = (size - stroke) / 2;

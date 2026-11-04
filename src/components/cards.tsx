@@ -44,7 +44,7 @@ export function ClubCard({ c }: { c: Club }) {
     <Link href={`/clubs/${c.id}`} className={cardBase}>
       <Photo src={c.image} alt={c.name} zoom ratio="aspect-[16/10]">
         <span className="absolute top-3 left-3">
-          <Pill tone={catTone(c.category)} className="bg-base-100/92 backdrop-blur">
+          <Pill tone={catTone(c.category)} glass>
             {c.category}
           </Pill>
         </span>
@@ -81,7 +81,7 @@ export function EventCard({ e }: { e: EventT }) {
           <span className="text-xs font-semibold text-primary">{monthOf(e.startAt)}</span>
         </span>
         <span className="absolute top-3 right-3">
-          {state === "live" ? <Pill tone="error">Happening now</Pill> : state === "past" ? <Pill tone="info" className="bg-base-100/92">Ended</Pill> : <Pill tone="secondary">{dayDistance(e.startAt)}</Pill>}
+          {state === "live" ? <Pill tone="error">Happening now</Pill> : state === "past" ? <Pill tone="info" glass>Ended</Pill> : <Pill tone="secondary">{dayDistance(e.startAt)}</Pill>}
         </span>
       </Photo>
       <div className="flex flex-1 flex-col gap-3 p-5">

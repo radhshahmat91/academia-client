@@ -74,7 +74,7 @@ export default function AdminNotices() {
       refresh={["/notices", "/dashboard", "/home", "/notifications"]}
       defaults={{ priority: "normal", category: "General", author: "Office of the Registrar", publishedAt: new Date().toISOString() }}
       rowExtra={(r) => (
-        <Link href={`/notices/${r.id}`} className="btn btn-ghost btn-sm btn-square" aria-label={`Open ${r.title} on the site`} title="View on the site">
+        <Link href={`/notices/${r.id}`} className="btn btn-ghost btn-sm btn-square max-sm:hidden" aria-label={`Open ${r.title} on the site`} title="View on the site">
           <ExternalLink className="size-4" />
         </Link>
       )}

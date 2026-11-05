@@ -65,7 +65,7 @@ export default async function AboutPage() {
         </Stagger>
       </section>
 
-      <section className="bg-base-100">
+      <section className="overflow-x-clip bg-base-100">
         <div className="wrap grid items-center gap-12 py-16 sm:py-24 lg:grid-cols-[1.1fr_1fr]">
           <Reveal>
             <h2 className="h-section matra text-3xl sm:text-4xl">What a student can do here</h2>

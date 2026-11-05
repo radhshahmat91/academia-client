@@ -56,7 +56,7 @@ export default function AdminClubs() {
       searchPlaceholder="Search by name or category"
       refresh={["/clubs", "/dashboard", "/home"]}
       rowExtra={(r) => (
-        <Link href={`/clubs/${r.id}`} className="btn btn-ghost btn-sm btn-square" aria-label={`Open ${r.name} on the site`} title="View on the site">
+        <Link href={`/clubs/${r.id}`} className="btn btn-ghost btn-sm btn-square max-sm:hidden" aria-label={`Open ${r.name} on the site`} title="View on the site">
           <ExternalLink className="size-4" />
         </Link>
       )}

@@ -93,7 +93,7 @@ export default function AdminEvents() {
       defaults={{ capacity: 100, category: "Seminar" }}
       validate={(b): Record<string, string> => (b.startAt && b.endAt && new Date(b.endAt) <= new Date(b.startAt) ? { endAt: "The event must end after it starts" } : {})}
       rowExtra={(r) => (
-        <Link href={`/events/${r.id}`} className="btn btn-ghost btn-sm btn-square" aria-label={`Open ${r.title} on the site`} title="View on the site">
+        <Link href={`/events/${r.id}`} className="btn btn-ghost btn-sm btn-square max-sm:hidden" aria-label={`Open ${r.title} on the site`} title="View on the site">
           <ExternalLink className="size-4" />
         </Link>
       )}

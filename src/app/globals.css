@@ -131,6 +131,13 @@
   }
 }
 
+@layer base {
+  /* Grid children may shrink below their content width, so wide content scrolls inside its own box instead of stretching the whole page. */
+  .grid > * {
+    min-width: 0;
+  }
+}
+
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;

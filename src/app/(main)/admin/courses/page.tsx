@@ -122,7 +122,7 @@ export default function AdminCourses() {
       size="xl"
       defaults={{ credits: 3, level: 100 }}
       rowExtra={(r) => (
-        <Link href={`/courses/${r.id}`} className="btn btn-ghost btn-sm btn-square" aria-label={`Open ${r.code} on the site`} title="View on the site">
+        <Link href={`/courses/${r.id}`} className="btn btn-ghost btn-sm btn-square max-sm:hidden" aria-label={`Open ${r.code} on the site`} title="View on the site">
           <ExternalLink className="size-4" />
         </Link>
       )}

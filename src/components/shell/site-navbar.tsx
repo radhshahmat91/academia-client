@@ -35,7 +35,7 @@ export function SiteNavbar({ user }: { user: SessionUser | null }) {
   const next = encodeURIComponent(pathname);
   return (
     <header className={cn("glass sticky top-0 z-40 border-b transition-colors", scrolled ? "border-base-content/10" : "border-transparent")}>
-      <div className="wrap flex h-[4.5rem] items-center justify-between gap-4">
+      <div className="wrap flex h-[4.5rem] items-center justify-between gap-2 sm:gap-4">
         <Logo />
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
           {SITE_LINKS.map((l) => {
@@ -48,11 +48,13 @@ export function SiteNavbar({ user }: { user: SessionUser | null }) {
             );
           })}
         </nav>
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
           {user ? (
             <>
-              <NotificationBell />
+              <span className="hidden sm:contents">
+                <NotificationBell />
+              </span>
               <Link href="/dashboard" className="btn btn-primary btn-sm hidden sm:inline-flex">
                 Dashboard
               </Link>

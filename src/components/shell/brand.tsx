@@ -22,12 +22,12 @@ export function LogoMark({ className }: { className?: string }) {
 
 export function Logo({ href = "/", className, compact }: { href?: string; className?: string; compact?: boolean }) {
   return (
-    <Link href={href} className={cn("group inline-flex items-center gap-2.5", className)} aria-label="AcademiaConnect home">
+    <Link href={href} className={cn("group inline-flex items-center gap-2 sm:gap-2.5", className)} aria-label="AcademiaConnect home">
       <motion.span whileHover={{ rotate: -6, scale: 1.06 }} transition={{ type: "spring", stiffness: 300, damping: 14 }}>
-        <LogoMark />
+        <LogoMark className="size-8 sm:size-9" />
       </motion.span>
       {!compact && (
-        <span className="text-xl font-bold tracking-tight" style={{ fontStretch: "108%" }}>
+        <span className="text-lg font-bold tracking-tight sm:text-xl" style={{ fontStretch: "108%" }}>
           Academia<span className="text-primary">Connect</span>
         </span>
       )}

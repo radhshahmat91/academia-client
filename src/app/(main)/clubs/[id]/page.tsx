@@ -37,7 +37,7 @@ export default function ClubPage() {
       <PageHeader back={{ href: "/clubs", label: "All clubs" }} title={club.name} sub={club.tagline} />
 
       <section className="surface overflow-hidden">
-        <Photo src={club.image} alt={club.name} ratio="aspect-[21/9] min-h-56" priority>
+        <Photo src={club.image} alt={club.name} ratio="aspect-[21/9] min-h-56 w-full" priority>
           <span className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
           <span className="absolute bottom-4 left-5 flex flex-wrap gap-2">
             <Pill tone={catTone(club.category)} glass>

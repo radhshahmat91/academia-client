@@ -130,7 +130,7 @@ const CHAT = [
 
 export function ChatShowcase() {
   return (
-    <section className="bg-neutral text-neutral-content">
+    <section className="overflow-x-clip bg-neutral text-neutral-content">
       <div className="wrap grid items-center gap-14 py-16 sm:py-24 lg:grid-cols-2">
         <Reveal x={-30} y={0}>
           <h2 className="h-section matra text-3xl text-white sm:text-4xl">Study groups that already exist</h2>

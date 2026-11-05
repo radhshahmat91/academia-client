@@ -79,4 +79,7 @@ export const safeNext = (next: string | null | undefined, fallback = "/dashboard
 export const PRIVATE_RE = /^\/(dashboard|registration|my-courses|evaluation|fees|receipt|transport|messages|students|profile|notifications|admin)(\/|$)|^\/(courses|clubs|events)\/[^/]+/;
 export const isPrivatePath = (p: string) => PRIVATE_RE.test(p);
 
+/** "03" and "Bus 03" both read as "Bus 03" */
+export const busLabel = (n?: string | null) => (/^bus\b/i.test(n ?? "") ? String(n) : `Bus ${n ?? ""}`.trim());
+
 export const pretty = (s: string) => s.replace(/[-_]+/g, " ").replace(/^./, (c) => c.toUpperCase());

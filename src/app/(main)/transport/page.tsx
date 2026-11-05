@@ -11,7 +11,7 @@ import { Stagger, StaggerItem } from "@/components/ui/motion";
 import { Photo } from "@/components/ui/photo";
 import { send, useAction, useGet } from "@/hooks/use-api";
 import type { Pass, Route } from "@/lib/types";
-import { cn, fmtDate, money, plural } from "@/lib/utils";
+import { busLabel, cn, fmtDate, money, plural } from "@/lib/utils";
 
 type PassRes = { passes: Pass[]; target: { id: string; name: string } | null; student: { name: string; studentId?: string; department?: string } };
 
@@ -46,7 +46,7 @@ function PassCard({ pass, onPay, onCancel, busy }: { pass: Pass; onPay: () => vo
           <div>
             <h2 className="h-section text-2xl">{pass.route.name}</h2>
             <p className="mt-1 text-base-content/65">
-              Bus {pass.route.busNo} · route {pass.route.code}
+              {busLabel(pass.route.busNo)} · route {pass.route.code}
             </p>
           </div>
           <dl className="grid gap-4 sm:grid-cols-2">
@@ -163,7 +163,7 @@ export default function TransportPage() {
                 <StaggerItem key={r.id} className="h-full">
                   <article className="surface flex h-full flex-col overflow-hidden">
                     <Photo src={r.image} alt={r.name} ratio="aspect-[16/7]">
-                      <span className="absolute top-3 left-3 rounded-full bg-base-100/95 px-3 py-1 text-xs font-bold backdrop-blur">Bus {r.busNo}</span>
+                      <span className="absolute top-3 left-3 rounded-full bg-base-100/95 px-3 py-1 text-xs font-bold backdrop-blur">{busLabel(r.busNo)}</span>
                       <span className="absolute top-3 right-3 rounded-full bg-secondary px-3 py-1 text-xs font-bold text-secondary-content">{money(r.fee)} per semester</span>
                     </Photo>
                     <div className="flex flex-1 flex-col gap-4 p-5 sm:p-6">

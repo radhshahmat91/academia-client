@@ -98,7 +98,7 @@ export function ListSkeleton({ n = 5 }: { n?: number }) {
 /* ------------------------------------------------------------------ forms */
 export function Field({ label, htmlFor, error, hint, optional, children, className }: { label?: ReactNode; htmlFor?: string; error?: string | null; hint?: ReactNode; optional?: boolean; children: ReactNode; className?: string }) {
   return (
-    <div className={cn("grid gap-1.5", className)}>
+    <div className={cn("grid content-start gap-1.5", className)}>
       {label && (
         <label htmlFor={htmlFor} className="text-sm font-semibold">
           {label}

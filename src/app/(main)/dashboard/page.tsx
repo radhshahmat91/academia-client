@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AlertCircle, ArrowRight, BookOpen, CalendarDays, ClipboardList, GraduationCap, MessagesSquare, Star, Users, Wallet } from "lucide-react";
+import { AlertCircle, ArrowRight, BookOpen, ClipboardList, GraduationCap, MessagesSquare, Star, Users, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -378,9 +378,6 @@ export default function DashboardPage() {
           )}
         </aside>
       </div>
-      <p className="sr-only">
-        <CalendarDays /> Dashboard loaded
-      </p>
     </div>
   );
 }

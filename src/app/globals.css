@@ -2,6 +2,7 @@
 @plugin "daisyui" {
   themes: false;
   logs: false;
+  exclude: join; /* its @scope selectors do not parse in Turbopack's CSS pipeline; Pagination uses plain flex instead */
 }
 
 /* Light: shapla (water lily) on a soft paper green, marigold for emphasis */

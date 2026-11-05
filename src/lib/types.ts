@@ -227,3 +227,5 @@ export type HistorySemester = {
   locked: boolean;
   pendingEvaluations: number;
 };
+
+export type Student = { id: string; name: string; image: string | null; department?: string | null; batch?: string | null; studentId?: string | null; bio?: string | null };

@@ -24,11 +24,14 @@ const themeScript = `(function(){try{var t=localStorage.getItem('ac-theme');if(!
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="shapla" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+    // Browser extensions (popup blockers, translators, Grammarly and the like) add their own tags and attributes to <html>,
+    // <head> and <body> before React starts. suppressHydrationWarning keeps React from reporting those as errors.
+    // data-scroll-behavior tells Next that the smooth scrolling in globals.css is intended (it pauses it during route changes).
+    <html lang="en" data-theme="shapla" data-scroll-behavior="smooth" suppressHydrationWarning>
+      <head suppressHydrationWarning>
+        <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>

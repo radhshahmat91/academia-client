@@ -8,7 +8,7 @@ AcademiaConnect is a full-stack university platform. Students follow courses wit
 |---|---|
 | **Live site** | https://YOUR-PROJECT.vercel.app *(replace with your deployed URL)* |
 | **API (Render)** | https://YOUR-SERVER.onrender.com *(replace with your deployed URL)* |
-| **Server repository** | `academiaconnect-server` (the sibling folder of this repository) |
+| **Server repository** | https://github.com/YOUR-NAME/academiaconnect-server *(replace with your repository link)* |
 
 ## Features
 

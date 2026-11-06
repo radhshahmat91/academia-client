@@ -68,7 +68,7 @@ function LoginForm() {
 
       <p className="mt-7 text-center text-base-content/70">
         New to AcademiaConnect?{" "}
-        <Link href={`/register${next !== "/dashboard" ? `?next=${encodeURIComponent(next)}` : ""}`} className="font-bold text-primary hover:underline">
+        <Link href={`/register${next !== "/" ? `?next=${encodeURIComponent(next)}` : ""}`} className="font-bold text-primary hover:underline">
           Create an account
         </Link>
       </p>

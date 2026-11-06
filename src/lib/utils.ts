@@ -73,7 +73,8 @@ export function ytThumb(id: string) {
   return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 }
 
-export const safeNext = (next: string | null | undefined, fallback = "/dashboard") => (next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : fallback);
+/** Where to go after login: the page the visitor asked for, otherwise the Home page. Only same-site paths are allowed. */
+export const safeNext = (next: string | null | undefined, fallback = "/") => (next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : fallback);
 
 /** Path prefixes that need a signed-in user. Mirrors proxy.ts */
 export const PRIVATE_RE = /^\/(dashboard|registration|my-courses|evaluation|fees|receipt|transport|messages|students|profile|notifications|admin)(\/|$)|^\/(courses|clubs|events)\/[^/]+/;

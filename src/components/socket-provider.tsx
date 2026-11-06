@@ -31,6 +31,7 @@ export function SocketProvider({ userId, children }: { userId: string; children:
 
   useEffect(() => {
     const s = io(SOCKET_URL, {
+      autoConnect: false,
       transports: ["websocket", "polling"],
       reconnectionDelayMax: 8000,
       // Fetched on every (re)connect so an expired token never keeps a tab offline
@@ -80,7 +81,12 @@ export function SocketProvider({ userId, children }: { userId: string; children:
       toast(n.title, { description: n.body, action: n.link ? { label: "View", onClick: () => router.push(n.link!) } : undefined });
     });
 
+    // Connect on the next tick. While developing, React mounts every effect twice and throws the first socket away at once;
+    // closing a socket that is still opening makes the browser log "WebSocket is closed before the connection is established".
+    const start = setTimeout(() => s.connect(), 0);
+
     return () => {
+      clearTimeout(start);
       s.removeAllListeners();
       s.disconnect();
       setSocket(null);

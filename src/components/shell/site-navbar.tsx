@@ -32,7 +32,7 @@ export function SiteNavbar({ user }: { user: SessionUser | null }) {
     return () => window.removeEventListener("scroll", on);
   }, []);
 
-  const next = encodeURIComponent(pathname);
+  const loginHref = pathname === "/" ? "/login" : `/login?next=${encodeURIComponent(pathname)}`;
   return (
     <header className={cn("glass sticky top-0 z-40 border-b transition-colors", scrolled ? "border-base-content/10" : "border-transparent")}>
       <div className="wrap flex h-[4.5rem] items-center justify-between gap-2 sm:gap-4">
@@ -62,7 +62,7 @@ export function SiteNavbar({ user }: { user: SessionUser | null }) {
             </>
           ) : (
             <>
-              <Link href={`/login?next=${next}`} className="btn btn-ghost btn-sm hidden sm:inline-flex">
+              <Link href={loginHref} className="btn btn-ghost btn-sm hidden sm:inline-flex">
                 Log in
               </Link>
               <Link href="/register" className="btn btn-primary btn-sm hidden sm:inline-flex">
@@ -92,7 +92,7 @@ export function SiteNavbar({ user }: { user: SessionUser | null }) {
                 </Link>
               ) : (
                 <div className="mt-3 grid grid-cols-2 gap-3">
-                  <Link href={`/login?next=${next}`} className="btn btn-outline">
+                  <Link href={loginHref} className="btn btn-outline">
                     Log in
                   </Link>
                   <Link href="/register" className="btn btn-primary">

@@ -8,7 +8,7 @@ import { GoogleButton, IconInput, OrDivider, PasswordInput, SubmitButton } from 
 import { Field } from "@/components/ui/kit";
 import { authClient } from "@/lib/auth-client";
 import { check, emailSchema, type FieldErrors } from "@/lib/validation";
-import { safeNext } from "@/lib/utils";
+import { authErrorMessage, safeNext } from "@/lib/utils";
 
 const DEMOS = [
   { label: "Demo student", email: "student@academiaconnect.test", password: "Student@123" },
@@ -33,7 +33,7 @@ function LoginForm() {
     const { data, error } = await authClient.signIn.email({ email: email.trim(), password });
     if (error || !data) {
       setBusy(false);
-      toast.error(error?.message || "Email or password is not correct");
+      toast.error(authErrorMessage(error, "Email or password is not correct"));
       return;
     }
     toast.success(`Welcome back, ${data.user.name.split(" ")[0]}`);

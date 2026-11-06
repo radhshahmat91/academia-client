@@ -76,6 +76,16 @@ export function ytThumb(id: string) {
 /** Where to go after login: the page the visitor asked for, otherwise the Home page. Only same-site paths are allowed. */
 export const safeNext = (next: string | null | undefined, fallback = "/") => (next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : fallback);
 
+/** Words for a sign in or sign up problem. A server error is almost always the database, so say that instead of a bare "Internal Server Error". */
+export function authErrorMessage(error: { status?: number; message?: string } | null | undefined, fallback: string): string {
+  if ((error?.status ?? 0) >= 500) {
+    return process.env.NODE_ENV === "production"
+      ? "Something went wrong on our side. Please try again in a moment."
+      : "The website could not reach its database. Look at the terminal that runs the website for the reason (usually MONGODB_URI in client/.env.local).";
+  }
+  return error?.message || fallback;
+}
+
 /** Path prefixes that need a signed-in user. Mirrors proxy.ts */
 export const PRIVATE_RE = /^\/(dashboard|registration|my-courses|evaluation|fees|receipt|transport|messages|students|profile|notifications|admin)(\/|$)|^\/(courses|clubs|events)\/[^/]+/;
 export const isPrivatePath = (p: string) => PRIVATE_RE.test(p);

@@ -8,7 +8,7 @@ import { GoogleButton, IconInput, OrDivider, PasswordChecklist, PasswordInput, S
 import { Avatar, Field } from "@/components/ui/kit";
 import { authClient } from "@/lib/auth-client";
 import { check, emailSchema, nameSchema, passwordError, photoSchema, type FieldErrors } from "@/lib/validation";
-import { safeNext } from "@/lib/utils";
+import { authErrorMessage, safeNext } from "@/lib/utils";
 
 type Key = "name" | "email" | "photo" | "password";
 
@@ -53,7 +53,7 @@ function RegisterForm() {
     if (error) {
       setBusy(false);
       if (/already exists/i.test(error.message ?? "")) setErrors((er) => ({ ...er, email: "This email already has an account. Log in instead." }));
-      toast.error(error.message || "We could not create your account");
+      toast.error(authErrorMessage(error, "We could not create your account"));
       return;
     }
     toast.success("Account created. Please log in to continue.");

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { IconInput, SubmitButton } from "@/components/auth/parts";
 import { Field } from "@/components/ui/kit";
 import { authClient } from "@/lib/auth-client";
+import { authErrorMessage } from "@/lib/utils";
 import { check, emailSchema } from "@/lib/validation";
 
 export default function ForgotPasswordPage() {
@@ -24,7 +25,7 @@ export default function ForgotPasswordPage() {
     const { error: err } = await authClient.requestPasswordReset({ email: email.trim(), redirectTo: "/reset-password" });
     setBusy(false);
     if (err) {
-      toast.error(err.message || "We could not send the reset link. Please try again.");
+      toast.error(authErrorMessage(err, "We could not send the reset link. Please try again."));
       return;
     }
     setSent(true);

@@ -52,6 +52,7 @@ function RegisterForm() {
     const { error } = await authClient.signUp.email({ name: form.name.trim(), email: form.email.trim(), password: form.password, ...(form.photo.trim() ? { image: form.photo.trim() } : {}) });
     if (error) {
       setBusy(false);
+      if (/already exists/i.test(error.message ?? "")) setErrors((er) => ({ ...er, email: "This email already has an account. Log in instead." }));
       toast.error(error.message || "We could not create your account");
       return;
     }

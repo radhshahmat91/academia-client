@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { jwt } from "better-auth/plugins/jwt";
 import { nextCookies } from "better-auth/next-js";
 import { MongoClient } from "mongodb";
@@ -62,6 +63,17 @@ export const auth = betterAuth({
     ? { socialProviders: { google: { clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: process.env.GOOGLE_CLIENT_SECRET } } }
     : {}),
   account: { accountLinking: { enabled: true, trustedProviders: ["google"] } },
+  hooks: {
+    // With autoSignIn off, BetterAuth answers a sign-up for a taken email with a fake "success" so nobody can probe
+    // which emails exist. On a campus platform people need a plain answer, so say it before anything is created.
+    before: createAuthMiddleware(async (ctx) => {
+      if (ctx.path !== "/sign-up/email") return;
+      const email = String(ctx.body?.email ?? "").trim().toLowerCase();
+      if (email && (await ctx.context.internalAdapter.findUserByEmail(email))?.user) {
+        throw new APIError("UNPROCESSABLE_ENTITY", { message: "An account with this email already exists. Please log in instead." });
+      }
+    }),
+  },
   session: { expiresIn: 60 * 60 * 24 * 14, updateAge: 60 * 60 * 24, cookieCache: { enabled: true, maxAge: 5 * 60 } },
   databaseHooks: {
     user: {

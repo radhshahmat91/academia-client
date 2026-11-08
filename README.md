@@ -21,7 +21,7 @@ AcademiaConnect is a full-stack university platform. Students follow courses wit
 - **Semester registration.** Section picker that checks prerequisites, schedule clashes, seat limits and the credit range, with a live fee estimate and weekly timetable preview.
 - **Semester-wise courses taken.** Every semester with grades, grade points, GPA and CGPA. Results of a finished semester unlock once its course evaluations are done.
 - **Anonymous course evaluation.** Eight-question star rating per course with an optional comment. Admins only ever see combined results, never who wrote what.
-- **Tuition and fee payments.** Itemised bills, tuition waivers, three installments, a sandbox payment gateway (wallet, card, bank) and printable receipts.
+- **Tuition and fee payments.** Itemised bills, tuition waivers, three installments, a sandbox payment gateway (bKash, Nagad, Rocket, bank card or bank transfer) and printable receipts.
 - **Transportation fee payments.** Browse bus routes and stops, request a pass, pay the fee and show a QR bus pass.
 - **Admin panel.** Overview charts, full CRUD for courses (lectures, notes, assessment), clubs, events, notices, semesters, sections and bus routes, user roles and waivers, grade entry, invoices, cash payments and refunds, bus passes, anonymous evaluation results and the contact inbox.
 - **Authentication.** BetterAuth with the MongoDB adapter and JWT. Email and password or Google. Visitors are sent to login and brought back to the page they wanted.
@@ -78,7 +78,7 @@ After the server's `npm run seed`:
 | Student | `student@academiaconnect.test` | `Student@123` |
 | Admin | `admin@academiaconnect.test` | `Admin@123` |
 
-Sandbox payments accept the verification code `123456`. Use an 11-digit wallet number starting with `01`, the last 4 digits of any card, or any bank reference of 4 or more characters.
+Sandbox payments accept the verification code `123456`. For bKash or Nagad use an 11-digit number starting with `01` (a Rocket number may have 12 digits). For a bank card use the last 4 digits of any card. For a bank transfer use any reference of 4 or more characters.
 
 ### Troubleshooting
 

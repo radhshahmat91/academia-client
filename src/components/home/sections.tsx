@@ -286,7 +286,7 @@ export function ClubsMarquee() {
 const FAQ = [
   ["Who can use AcademiaConnect?", "Any student can create an account with an email address or a Google account. Administrator access is given by the registrar's office."],
   ["How does semester registration work?", "When registration opens, pick sections within the credit limits. Time clashes, full sections and missing prerequisites are flagged before you confirm, and your fee invoice is created straight away."],
-  ["How are fees paid?", "Each invoice is split into three installments. You can pay the next installment or the whole balance. This demo runs on a sandbox gateway, so no real money moves, and every payment produces a printable receipt."],
+  ["How are fees paid?", "Each invoice is split into three installments. You can pay the next installment or the whole balance with bKash, Nagad, Rocket, a bank card or a bank transfer. This demo runs on a sandbox gateway, so no real money moves, and every payment produces a printable receipt."],
   ["Why are my results hidden?", "When a semester ends, results unlock once you have evaluated every course you took in it. Evaluations are anonymous, so instructors never see who wrote what."],
   ["Who can read my messages?", "Direct messages are visible only to the two people in them. Course and club groups are visible to their members."],
 ];

@@ -269,9 +269,9 @@ export function Stars({ value, onChange, label }: { value: number; onChange: (n:
   );
 }
 
-export function Meter({ value, max = 100, tone = "primary", className }: { value: number; max?: number; tone?: "primary" | "secondary" | "success" | "error"; className?: string }) {
+export function Meter({ value, max = 100, tone = "primary", className }: { value: number; max?: number; tone?: Tone; className?: string }) {
   const pct = max ? Math.min(100, (value / max) * 100) : 0;
-  const fill = { primary: "bg-primary", secondary: "bg-secondary", success: "bg-success", error: "bg-error" }[tone];
+  const fill = { primary: "bg-primary", secondary: "bg-secondary", success: "bg-success", warning: "bg-warning", error: "bg-error", info: "bg-info" }[tone];
   return (
     <div className={cn("h-2 overflow-hidden rounded-full bg-base-content/10", className)} role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
       <motion.div className={cn("h-full rounded-full", fill)} initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.9, ease: "easeOut" }} />

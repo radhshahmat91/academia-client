@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { EmptyState, ErrorState, PageHeader } from "@/components/ui/kit";
 import { Logo } from "@/components/shell/brand";
 import { useGet } from "@/hooks/use-api";
+import { methodLabel } from "@/lib/payments";
 import type { Invoice, Payment } from "@/lib/types";
 import { cn, fmtDateTime, money } from "@/lib/utils";
 
@@ -13,7 +14,6 @@ type Res = {
   payment: Omit<Payment, "invoice"> & { invoice: Invoice };
   student: { name: string; email: string; studentId?: string; department?: string; batch?: string };
 };
-const METHOD = { wallet: "Mobile wallet", card: "Card", bank: "Bank transfer" } as const;
 
 export default function ReceiptPage() {
   const { id } = useParams<{ id: string }>();
@@ -30,7 +30,7 @@ export default function ReceiptPage() {
     { k: "Date and time", v: fmtDateTime(p.paidAt ?? p.createdAt) },
     { k: "Transaction ID", v: p.txnId },
     { k: "Invoice number", v: inv.number },
-    { k: "Payment method", v: `${METHOD[p.method as keyof typeof METHOD] ?? p.method}${p.payerRef ? `, ${p.payerRef}` : ""}` },
+    { k: "Payment method", v: `${methodLabel(p.method)}${p.payerRef ? `, ${p.payerRef}` : ""}` },
     ...(p.installmentNo ? [{ k: "Installment", v: `Number ${p.installmentNo}` }] : []),
   ];
 

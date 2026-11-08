@@ -6,7 +6,8 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import { EmptyState, ErrorState, Meter, PageHeader, Pill, StatCard, type Tone } from "@/components/ui/kit";
 import { CountUp, Reveal, Stagger, StaggerItem } from "@/components/ui/motion";
 import { useGet } from "@/hooks/use-api";
-import { fmtDateTime, money, pretty } from "@/lib/utils";
+import { methodLabel } from "@/lib/payments";
+import { fmtDateTime, money } from "@/lib/utils";
 
 type Stats = {
   counts: { students: number; courses: number; clubs: number; upcomingEvents: number; notices: number; activeEnrollments: number; evaluations: number; pendingPasses: number };
@@ -36,7 +37,7 @@ const monthSeries = (rows: { month: string; amount: number }[]) => {
 };
 const monthLabel = (m: string) => new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Dhaka", month: "short", year: "2-digit" }).format(new Date(`${m}-01T12:00:00+06:00`));
 const tooltipStyle = { background: "var(--color-base-100)", border: "1px solid color-mix(in oklab, currentColor 12%, transparent)", borderRadius: 12, color: "var(--color-base-content)" };
-const METHOD_TONE: Record<string, Tone> = { wallet: "secondary", card: "info", bank: "primary" };
+const METHOD_TONE: Record<string, Tone> = { bkash: "secondary", nagad: "warning", rocket: "info", card: "primary", bank: "success", wallet: "secondary" };
 
 function BarPanel({ title, sub, data, x, y, format, unit, color }: { title: string; sub: string; data: Record<string, string | number>[]; x: string; y: string; format: (n: number) => string; unit: string; color: string }) {
   return (
@@ -146,12 +147,12 @@ export default function AdminOverview() {
                   .map((m) => (
                     <li key={m.method}>
                       <p className="mb-1.5 flex items-baseline justify-between gap-3">
-                        <span className="font-semibold">{pretty(m.method === "wallet" ? "Mobile wallet" : m.method === "card" ? "Card" : m.method === "bank" ? "Bank and counter" : m.method)}</span>
+                        <span className="font-semibold">{m.method === "bank" ? "Bank and counter" : methodLabel(m.method)}</span>
                         <span className="text-sm text-base-content/65">
                           {money(m.amount)} · {Math.round((m.amount / methodTotal) * 100)}%
                         </span>
                       </p>
-                      <Meter value={(m.amount / methodTotal) * 100} tone={m.method === "wallet" ? "secondary" : m.method === "bank" ? "success" : "primary"} />
+                      <Meter value={(m.amount / methodTotal) * 100} tone={METHOD_TONE[m.method] ?? "primary"} />
                       <p className="mt-1 text-xs text-base-content/55">{m.payments} payment{m.payments === 1 ? "" : "s"}</p>
                     </li>
                   ))}
@@ -189,7 +190,7 @@ export default function AdminOverview() {
                       </p>
                     </div>
                     <div className="flex shrink-0 items-center gap-3">
-                      {p.method && <Pill tone={METHOD_TONE[p.method] ?? "primary"}>{pretty(p.method)}</Pill>}
+                      {p.method && <Pill tone={METHOD_TONE[p.method] ?? "primary"}>{methodLabel(p.method)}</Pill>}
                       <span className={p.status === "refunded" ? "font-bold text-error line-through" : "font-bold"}>{money(p.amount)}</span>
                     </div>
                   </li>

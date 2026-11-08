@@ -8,13 +8,12 @@ import { useCheckout } from "@/components/checkout";
 import { EmptyState, ErrorState, Meter, PageHeader, Pill, StatCard, Tabs, type Tone } from "@/components/ui/kit";
 import { CountUp, Stagger, StaggerItem } from "@/components/ui/motion";
 import { useGet } from "@/hooks/use-api";
+import { methodLabel } from "@/lib/payments";
 import type { Invoice, Payment } from "@/lib/types";
 import { cn, fmtDate, fmtDateTime, money, plural } from "@/lib/utils";
 
 type Res = { invoices: Invoice[]; payments: Payment[]; totals: { billed: number; paid: number; due: number } };
 type Tab = "invoices" | "history";
-
-const METHOD = { wallet: "Mobile wallet", card: "Card", bank: "Bank transfer" } as const;
 
 function status(inv: Invoice): { tone: Tone; label: string } {
   if (inv.status === "paid") return { tone: "success", label: "Paid" };
@@ -229,7 +228,7 @@ export default function FeesPage() {
                           {p.installmentNo ? <span className="text-base-content/60"> · installment {p.installmentNo}</span> : null}
                         </p>
                         <p className="text-sm text-base-content/75">
-                          {METHOD[p.method as keyof typeof METHOD] ?? p.method}
+                          {methodLabel(p.method)}
                           {p.payerRef ? <span className="block text-xs text-base-content/55">{p.payerRef}</span> : null}
                         </p>
                         <p className="flex items-center gap-2 font-bold">

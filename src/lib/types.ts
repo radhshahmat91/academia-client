@@ -166,7 +166,8 @@ export type Payment = {
   id: string;
   invoice: { id: string; number: string; type: string; title: string } | string;
   amount: number;
-  method: "wallet" | "card" | "bank";
+  /** "wallet" is what older payments were called before bKash, Nagad and Rocket were listed one by one */
+  method: "bkash" | "nagad" | "rocket" | "card" | "bank" | "wallet";
   status: "pending" | "success" | "failed" | "refunded";
   txnId: string;
   receiptNo: string;

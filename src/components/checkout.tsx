@@ -7,7 +7,7 @@ import { useState, type ReactNode } from "react";
 import { Field } from "@/components/ui/kit";
 import { Modal } from "@/components/ui/modal";
 import { send, useAction } from "@/hooks/use-api";
-import { methodLabel } from "@/lib/payments";
+import { methodColor, methodLabel, tint } from "@/lib/payments";
 import { cn, money } from "@/lib/utils";
 
 export type CheckoutSession = { paymentId: string; txnId: string; amount: number; invoice: { id: string; number: string; title: string } };
@@ -18,8 +18,6 @@ type MethodInfo = {
   label: string;
   /** Mobile wallets are shown as three tiles side by side, the other methods as rows */
   wallet?: boolean;
-  /** Colour of the wallet tile when it is chosen */
-  accent?: string;
   hint?: string;
   icon: ReactNode;
   field: string;
@@ -29,9 +27,9 @@ type MethodInfo = {
 };
 
 const METHODS: MethodInfo[] = [
-  { value: "bkash", label: "bKash", wallet: true, accent: "#e2136e", icon: <Smartphone className="size-5" />, field: "bKash number", placeholder: "01XXXXXXXXX", inputMode: "numeric", max: 11 },
-  { value: "nagad", label: "Nagad", wallet: true, accent: "#f7941d", icon: <Smartphone className="size-5" />, field: "Nagad number", placeholder: "01XXXXXXXXX", inputMode: "numeric", max: 11 },
-  { value: "rocket", label: "Rocket", wallet: true, accent: "#8c3494", icon: <Smartphone className="size-5" />, field: "Rocket number", placeholder: "01XXXXXXXXX", inputMode: "numeric", max: 12 },
+  { value: "bkash", label: "bKash", wallet: true, icon: <Smartphone className="size-5" />, field: "bKash number", placeholder: "01XXXXXXXXX", inputMode: "numeric", max: 11 },
+  { value: "nagad", label: "Nagad", wallet: true, icon: <Smartphone className="size-5" />, field: "Nagad number", placeholder: "01XXXXXXXXX", inputMode: "numeric", max: 11 },
+  { value: "rocket", label: "Rocket", wallet: true, icon: <Smartphone className="size-5" />, field: "Rocket number", placeholder: "01XXXXXXXXX", inputMode: "numeric", max: 12 },
   { value: "card", label: "Bank card", hint: "Debit or credit, Visa or Mastercard", icon: <CreditCard className="size-5" />, field: "Last 4 digits of your card", placeholder: "1234", inputMode: "numeric", max: 4 },
   { value: "bank", label: "Bank transfer", hint: "Any bank in Bangladesh", icon: <Landmark className="size-5" />, field: "Bank transaction reference", placeholder: "Reference number", inputMode: "text", max: 30 },
 ];
@@ -54,8 +52,6 @@ function validate(method: Method, ref: string, code: string) {
   if (!/^\d{6}$/.test(code)) errors.code = "Enter the 6 digit verification code";
   return errors;
 }
-
-const tint = (color: string, percent: number) => `color-mix(in oklab, ${color} ${percent}%, transparent)`;
 
 function CheckoutModal({ session, onClose }: { session: CheckoutSession; onClose: () => void }) {
   const [method, setMethod] = useState<Method>("bkash");
@@ -137,18 +133,19 @@ function CheckoutModal({ session, onClose }: { session: CheckoutSession; onClose
             <div className="grid grid-cols-3 gap-2">
               {WALLETS.map((x) => {
                 const on = method === x.value;
+                const color = methodColor(x.value);
                 return (
                   <label
                     key={x.value}
                     className={cn("relative flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 px-2 py-3 text-center transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary/60", !on && "border-base-content/10 hover:border-base-content/25")}
-                    style={on ? { borderColor: x.accent, backgroundColor: tint(x.accent!, 9) } : undefined}
+                    style={on ? { borderColor: color, backgroundColor: tint(color, 9) } : undefined}
                   >
                     <input type="radio" name="method" className="sr-only" checked={on} onChange={() => choose(x.value)} />
-                    <span className="grid size-10 place-items-center rounded-full" style={{ backgroundColor: tint(x.accent!, 15), color: x.accent }}>
+                    <span className="grid size-10 place-items-center rounded-full" style={{ backgroundColor: tint(color, 15), color }}>
                       {x.icon}
                     </span>
                     <span className="text-sm font-bold">{x.label}</span>
-                    {on && <CheckCircle2 className="absolute top-1.5 right-1.5 size-4" style={{ color: x.accent }} aria-hidden />}
+                    {on && <CheckCircle2 className="absolute top-1.5 right-1.5 size-4" style={{ color }} aria-hidden />}
                   </label>
                 );
               })}

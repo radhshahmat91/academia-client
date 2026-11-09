@@ -4,10 +4,10 @@ import { HandCoins, Undo2 } from "lucide-react";
 import { useState } from "react";
 import type { Column } from "@/components/admin/table";
 import { ListView } from "@/components/admin/table";
+import { MethodPill } from "@/components/method-pill";
 import { Field, PageHeader, Pill, Spinner, Tabs, type Tone } from "@/components/ui/kit";
 import { Modal, useConfirm } from "@/components/ui/modal";
 import { send, useAction } from "@/hooks/use-api";
-import { methodLabel } from "@/lib/payments";
 import { fmtDate, fmtDateTime, money, pretty } from "@/lib/utils";
 
 type Invoice = { id: string; number: string; title: string; type: string; status: "unpaid" | "partial" | "paid" | "cancelled"; total: number; paid: number; due: number; dueDate?: string; studentName: string; studentCode: string; semester?: { name: string } | null };
@@ -173,7 +173,7 @@ function Payments() {
     },
     { header: "Student", cell: (r) => <Student name={r.studentName} code={r.studentCode} /> },
     { header: "For", hide: "2xl", cell: (r) => <span className="block max-w-[14rem] truncate text-sm">{r.invoice?.title}</span> },
-    { header: "Method", hide: "xl", cell: (r) => (r.method ? <Pill tone="primary">{methodLabel(r.method)}</Pill> : null) },
+    { header: "Method", hide: "xl", cell: (r) => <MethodPill method={r.method} /> },
     { header: "Amount", cell: (r) => <span className="font-bold whitespace-nowrap">{money(r.amount)}</span> },
     { header: "Status", cell: (r) => <Pill tone={PAY_TONE[r.status]}>{pretty(r.status)}</Pill> },
     { header: "Date", hide: "lg", cell: (r) => <span className="text-sm whitespace-nowrap">{fmtDateTime(r.paidAt ?? r.createdAt)}</span> },

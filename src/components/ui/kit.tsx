@@ -269,12 +269,13 @@ export function Stars({ value, onChange, label }: { value: number; onChange: (n:
   );
 }
 
-export function Meter({ value, max = 100, tone = "primary", className }: { value: number; max?: number; tone?: Tone; className?: string }) {
+/** `color` (any CSS colour) wins over `tone` when a bar needs a colour of its own, like a payment method's */
+export function Meter({ value, max = 100, tone = "primary", color, className }: { value: number; max?: number; tone?: Tone; color?: string; className?: string }) {
   const pct = max ? Math.min(100, (value / max) * 100) : 0;
   const fill = { primary: "bg-primary", secondary: "bg-secondary", success: "bg-success", warning: "bg-warning", error: "bg-error", info: "bg-info" }[tone];
   return (
     <div className={cn("h-2 overflow-hidden rounded-full bg-base-content/10", className)} role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
-      <motion.div className={cn("h-full rounded-full", fill)} initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.9, ease: "easeOut" }} />
+      <motion.div className={cn("h-full rounded-full", !color && fill)} style={color ? { backgroundColor: color } : undefined} initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.9, ease: "easeOut" }} />
     </div>
   );
 }

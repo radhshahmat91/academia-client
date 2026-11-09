@@ -3,10 +3,11 @@
 import { BookOpen, Bus, CalendarDays, ClipboardCheck, GraduationCap, HandCoins, Megaphone, Star, Users, UsersRound, Wallet, Receipt } from "lucide-react";
 import Link from "next/link";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { EmptyState, ErrorState, Meter, PageHeader, Pill, StatCard, type Tone } from "@/components/ui/kit";
+import { MethodPill } from "@/components/method-pill";
+import { EmptyState, ErrorState, Meter, PageHeader, StatCard, type Tone } from "@/components/ui/kit";
 import { CountUp, Reveal, Stagger, StaggerItem } from "@/components/ui/motion";
 import { useGet } from "@/hooks/use-api";
-import { methodLabel } from "@/lib/payments";
+import { methodColor, methodLabel } from "@/lib/payments";
 import { fmtDateTime, money } from "@/lib/utils";
 
 type Stats = {
@@ -37,7 +38,6 @@ const monthSeries = (rows: { month: string; amount: number }[]) => {
 };
 const monthLabel = (m: string) => new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Dhaka", month: "short", year: "2-digit" }).format(new Date(`${m}-01T12:00:00+06:00`));
 const tooltipStyle = { background: "var(--color-base-100)", border: "1px solid color-mix(in oklab, currentColor 12%, transparent)", borderRadius: 12, color: "var(--color-base-content)" };
-const METHOD_TONE: Record<string, Tone> = { bkash: "secondary", nagad: "warning", rocket: "info", card: "primary", bank: "success", wallet: "secondary" };
 
 function BarPanel({ title, sub, data, x, y, format, unit, color }: { title: string; sub: string; data: Record<string, string | number>[]; x: string; y: string; format: (n: number) => string; unit: string; color: string }) {
   return (
@@ -152,7 +152,7 @@ export default function AdminOverview() {
                           {money(m.amount)} · {Math.round((m.amount / methodTotal) * 100)}%
                         </span>
                       </p>
-                      <Meter value={(m.amount / methodTotal) * 100} tone={METHOD_TONE[m.method] ?? "primary"} />
+                      <Meter value={(m.amount / methodTotal) * 100} color={methodColor(m.method)} />
                       <p className="mt-1 text-xs text-base-content/55">{m.payments} payment{m.payments === 1 ? "" : "s"}</p>
                     </li>
                   ))}
@@ -190,7 +190,7 @@ export default function AdminOverview() {
                       </p>
                     </div>
                     <div className="flex shrink-0 items-center gap-3">
-                      {p.method && <Pill tone={METHOD_TONE[p.method] ?? "primary"}>{methodLabel(p.method)}</Pill>}
+                      <MethodPill method={p.method} />
                       <span className={p.status === "refunded" ? "font-bold text-error line-through" : "font-bold"}>{money(p.amount)}</span>
                     </div>
                   </li>

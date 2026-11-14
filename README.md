@@ -61,7 +61,7 @@ Useful scripts: `npm run dev`, `npm run build`, `npm start`, `npm run typecheck`
 | `MONGODB_URI`, `MONGODB_DB` | Database used by BetterAuth. Atlas (`mongodb+srv://...`) or a local MongoDB. Use the **same** string and database name as the server. |
 | `DNS_SERVERS` | Optional. Only for Atlas addresses: the DNS servers to fall back on when this computer's own DNS cannot look the address up. Default `1.1.1.1,8.8.8.8`. Write `system` to turn the fallback off. |
 | `BETTER_AUTH_SECRET` | Long random string (`openssl rand -base64 32`). |
-| `BETTER_AUTH_URL` | Public URL of this site (`http://localhost:3000` locally). |
+| `BETTER_AUTH_URL` | Public URL of this site (`http://localhost:3000` locally). On Vercel, if it is missing or still says localhost, the address Vercel gives the deployment is used instead. |
 | `NEXT_PUBLIC_API_URL` | Base URL of the Express API. |
 | `NEXT_PUBLIC_SOCKET_URL` | Base URL of the Socket.io server (same as the API). |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google login. Redirect URI: `{BETTER_AUTH_URL}/api/auth/callback/google`. Leave empty and the Google button shows a friendly message while email login keeps working. |
@@ -91,6 +91,7 @@ Sandbox payments accept the verification code `123456`. For bKash or Nagad use a
 | Login works but the demo accounts do not exist | Run `npm run seed` in the server folder. It must use the same `MONGODB_URI` and `MONGODB_DB` as this site. |
 | Signed-in pages say the session expired | The API is not running, or its `AUTH_URL` is not this site's address (`http://localhost:3000` locally). |
 | "Too many requests" at login | Sign-in is limited to 3 attempts per 10 seconds. Wait a few seconds. |
+| Login says "this browser did not keep the login", or you land back on the login page after "Welcome back" | Open `/api/auth-check` on the site (on Vercel: `https://your-site.vercel.app/api/auth-check`) straight after trying to log in. The first line, `verdict`, names the cause: an address that differs from `BETTER_AUTH_URL`, a browser that refused the cookie, or a database the website cannot reach. |
 
 ## Project structure
 

@@ -12,7 +12,18 @@ const client = g.__acMongo ?? new MongoClient(process.env.MONGODB_URI ?? "mongod
 if (process.env.NODE_ENV !== "production") g.__acMongo = client;
 const db = client.db(process.env.MONGODB_DB ?? "academiaconnect");
 
-const baseURL = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
+// The address people open the website at. BETTER_AUTH_URL wins. Vercel also tells every deployment its own addresses (without
+// "https://"), so when BETTER_AUTH_URL is missing or still says localhost there, the Vercel address is used instead and login
+// keeps working. Every Vercel address of this project is trusted as an origin, so the production alias, a branch address
+// and the address of one particular deployment all sign in.
+const onVercel = !!process.env.VERCEL && process.env.VERCEL_ENV !== "development";
+const asOrigin = (host?: string) => (host ? `https://${host.replace(/^https?:\/\//, "").replace(/\/+$/, "")}` : undefined);
+const vercelOrigins = [process.env.VERCEL_PROJECT_PRODUCTION_URL, process.env.VERCEL_BRANCH_URL, process.env.VERCEL_URL].map(asOrigin).filter((o): o is string => !!o);
+const vercelMain = process.env.VERCEL_ENV === "production" ? asOrigin(process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL) : asOrigin(process.env.VERCEL_URL);
+const configured = process.env.BETTER_AUTH_URL?.trim().replace(/\/+$/, "") || undefined;
+const stillLocal = !!configured && /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/i.test(configured);
+export const siteURL = configured && !(onVercel && stillLocal) ? configured : ((onVercel && vercelMain) || "http://localhost:3000");
+const baseURL = siteURL;
 const admins = (process.env.ADMIN_EMAILS ?? "")
   .split(",")
   .map((e) => e.trim().toLowerCase())
@@ -44,7 +55,7 @@ export const auth = betterAuth({
   baseURL,
   secret: process.env.BETTER_AUTH_SECRET,
   database: mongodbAdapter(db),
-  trustedOrigins: [baseURL, ...(process.env.TRUSTED_ORIGINS ?? "").split(",").map((o) => o.trim()).filter(Boolean)],
+  trustedOrigins: [...new Set([baseURL, ...vercelOrigins, ...(process.env.TRUSTED_ORIGINS ?? "").split(",").map((o) => o.trim().replace(/\/+$/, "")).filter(Boolean)])],
   user: {
     additionalFields: {
       role: { type: "string", required: false, defaultValue: "student", input: false },

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { GoogleButton, IconInput, OrDivider, PasswordInput, SubmitButton } from "@/components/auth/parts";
@@ -15,8 +15,17 @@ const DEMOS = [
   { label: "Demo admin", email: "admin@academiaconnect.test", password: "Admin@123" },
 ];
 
+/** Can the website see the login that was just created? Asked the same way every later page will ask it (cookie included). */
+async function loginWasKept() {
+  try {
+    const { data } = await authClient.getSession({ fetchOptions: { cache: "no-store" } });
+    return !!data?.user;
+  } catch {
+    return false;
+  }
+}
+
 function LoginForm() {
-  const router = useRouter();
   const params = useSearchParams();
   const next = safeNext(params.get("next"));
   const [email, setEmail] = useState("");
@@ -33,12 +42,29 @@ function LoginForm() {
     const { data, error } = await authClient.signIn.email({ email: email.trim(), password });
     if (error || !data) {
       setBusy(false);
-      toast.error(authErrorMessage(error, "Email or password is not correct"));
+      // "Invalid origin": the address in the browser is not the one the website was set up for (BETTER_AUTH_URL)
+      const wrongAddress = error?.status === 403 && /origin/i.test(error.message ?? "");
+      toast.error(wrongAddress ? "This website address is not set up for login yet. Open /api/auth-check on this site to see what to change." : authErrorMessage(error, "Email or password is not correct"), { duration: wrongAddress ? 12_000 : undefined });
       return;
     }
-    toast.success(`Welcome back, ${data.user.name.split(" ")[0]}`);
-    router.replace(next);
-    router.refresh();
+
+    // The password was right. Before leaving this page, make sure the website can see the new login. If the browser refused
+    // the cookie (or the server cannot read it) say so here, instead of cheerfully moving on and landing back on this page.
+    if (!(await loginWasKept())) {
+      setBusy(false);
+      console.error("[AcademiaConnect] The password was accepted, but the website cannot see the login afterwards. Open /api/auth-check on this site to see why.");
+      toast.error("Your password is correct, but this browser did not keep the login. Allow cookies for this site (or try a private window) and log in again.", { duration: 12_000 });
+      return;
+    }
+
+    // A full page load, so the very first request for the next page already carries the new login cookie and nothing
+    // from the signed-out visit (cached pages, prefetched redirects) can be reused. The welcome message is shown there.
+    try {
+      sessionStorage.setItem("ac-welcome", data.user.name.split(" ")[0] ?? "");
+    } catch {
+      /* private mode without storage: the message is simply skipped */
+    }
+    window.location.replace(next);
   }
 
   return (

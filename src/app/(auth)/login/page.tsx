@@ -7,8 +7,9 @@ import { toast } from "sonner";
 import { GoogleButton, IconInput, OrDivider, PasswordInput, SubmitButton } from "@/components/auth/parts";
 import { Field } from "@/components/ui/kit";
 import { authClient } from "@/lib/auth-client";
+import { flash } from "@/lib/flash";
 import { check, emailSchema, type FieldErrors } from "@/lib/validation";
-import { authErrorMessage, safeNext } from "@/lib/utils";
+import { authErrorMessage, EMPTY_ANSWER_MESSAGE, NETWORK_MESSAGE, safeNext, toastMs } from "@/lib/utils";
 
 const DEMOS = [
   { label: "Demo student", email: "student@academiaconnect.test", password: "Student@123" },
@@ -39,12 +40,19 @@ function LoginForm() {
     setErrors(found);
     if (found.email || found.password) return;
     setBusy(true);
-    const { data, error } = await authClient.signIn.email({ email: email.trim(), password });
+    const attempt = await authClient.signIn.email({ email: email.trim(), password }).catch(() => null);
+    if (!attempt) {
+      // The request never got an answer: offline, blocked, or the address is wrong
+      setBusy(false);
+      toast.error(NETWORK_MESSAGE, { duration: toastMs(NETWORK_MESSAGE) });
+      return;
+    }
+    const { data, error } = attempt;
     if (error || !data) {
       setBusy(false);
-      // "Invalid origin": the address in the browser is not the one the website was set up for (BETTER_AUTH_URL)
-      const wrongAddress = error?.status === 403 && /origin/i.test(error.message ?? "");
-      toast.error(wrongAddress ? "This website address is not set up for login yet. Open /api/auth-check on this site to see what to change." : authErrorMessage(error, "Email or password is not correct"), { duration: wrongAddress ? 12_000 : undefined });
+      // Only a real "wrong password" answer is shown as one. Anything else says what the login service really replied.
+      const message = error ? authErrorMessage(error, "Email or password is not correct") : EMPTY_ANSWER_MESSAGE;
+      toast.error(message, { duration: toastMs(message) });
       return;
     }
 
@@ -59,11 +67,8 @@ function LoginForm() {
 
     // A full page load, so the very first request for the next page already carries the new login cookie and nothing
     // from the signed-out visit (cached pages, prefetched redirects) can be reused. The welcome message is shown there.
-    try {
-      sessionStorage.setItem("ac-welcome", data.user.name.split(" ")[0] ?? "");
-    } catch {
-      /* private mode without storage: the message is simply skipped */
-    }
+    const first = data.user.name.split(" ")[0] ?? "";
+    flash(first ? `Welcome back, ${first}` : "Welcome back");
     window.location.replace(next);
   }
 

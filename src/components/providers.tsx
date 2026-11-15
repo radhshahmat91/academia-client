@@ -4,22 +4,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { Toaster, toast } from "sonner";
 import { ConfirmProvider } from "@/components/ui/modal";
+import { takeFlash } from "@/lib/flash";
 
 export type Theme = "shapla" | "shapla-night";
 const ThemeCtx = createContext<{ theme: Theme; toggle: () => void }>({ theme: "shapla", toggle: () => {} });
 export const useTheme = () => useContext(ThemeCtx);
 
-/** The login page loads the next page in full and leaves the name here, so the welcome message appears on the page that opens. */
-function WelcomeToast() {
+/** Logging in and signing out load the next page in full and leave their message here, so it appears on the page that opens. */
+function FlashToast() {
   useEffect(() => {
-    try {
-      const name = sessionStorage.getItem("ac-welcome");
-      if (name === null) return;
-      sessionStorage.removeItem("ac-welcome");
-      toast.success(name ? `Welcome back, ${name}` : "Welcome back");
-    } catch {
-      /* no storage: no message */
-    }
+    const message = takeFlash();
+    if (message) toast.success(message);
   }, []);
   return null;
 }
@@ -43,7 +38,7 @@ function ThemeProvider({ children }: { children: ReactNode }) {
     <ThemeCtx.Provider value={{ theme, toggle }}>
       {children}
       <Toaster theme={theme === "shapla-night" ? "dark" : "light"} position="top-right" richColors closeButton toastOptions={{ style: { fontFamily: "var(--font-sans)", borderRadius: "14px" } }} />
-      <WelcomeToast />
+      <FlashToast />
     </ThemeCtx.Provider>
   );
 }

@@ -76,14 +76,45 @@ export function ytThumb(id: string) {
 /** Where to go after login: the page the visitor asked for, otherwise the Home page. Only same-site paths are allowed. */
 export const safeNext = (next: string | null | undefined, fallback = "/") => (next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : fallback);
 
-/** Words for a sign in or sign up problem. A server error is almost always the database, so say that instead of a bare "Internal Server Error". */
-export function authErrorMessage(error: { status?: number; message?: string } | null | undefined, fallback: string): string {
-  if ((error?.status ?? 0) >= 500) {
+/** Said when the login service cannot be reached at all (offline, blocked, wrong address). */
+export const NETWORK_MESSAGE = "We could not reach the login service. Check your internet connection and try again.";
+
+const OWNER_HINT = "If you run this website: open /api/auth-check on it to see what to change.";
+
+/** Said when the login service answers 200 but with nothing in it. */
+export const EMPTY_ANSWER_MESSAGE = `The login service gave an empty answer. That points to the website's setup, not to what you typed. ${OWNER_HINT}`;
+
+/** Long messages stay on screen longer (undefined keeps the default). */
+export const toastMs = (message: string) => (message.length > 90 ? 12_000 : undefined);
+
+type AuthError = { status?: number; statusText?: string; code?: string; message?: string } | null | undefined;
+
+/**
+ * Words for a sign in, sign up or password problem.
+ *
+ * The login service always says why when the problem is something the person typed (wrong password, email already used,
+ * password too short). An answer with no reason, or a 404, 403 or 5xx, means the website itself is not set up right. Say that,
+ * with the status code, instead of blaming the password.
+ */
+export function authErrorMessage(error: AuthError, fallback: string): string {
+  if (!error) return fallback;
+  const status = error.status ?? 0;
+  const message = (error.message ?? "").trim();
+
+  if (status >= 500) {
     return process.env.NODE_ENV === "production"
-      ? "Something went wrong on our side. Please try again in a moment."
+      ? `Something went wrong on our side (error ${status}). Please try again in a moment. ${OWNER_HINT}`
       : "The website could not reach its database. Look at the terminal that runs the website for the reason (usually MONGODB_URI in client/.env.local).";
   }
-  return error?.message || fallback;
+  // The address in the browser is not the one the website was set up for (BETTER_AUTH_URL)
+  if (status === 403 && /origin/i.test(message)) return `This website address is not set up for login yet. ${OWNER_HINT}`;
+  if (error.code === "INVALID_EMAIL_OR_PASSWORD" || (status === 401 && /invalid email or password/i.test(message))) return "Email or password is not correct";
+  if (status === 429) return message || "Too many attempts. Please wait a minute and try again.";
+  if (message) return message;
+  if (status >= 400) {
+    return `The login service answered with an unexpected reply (HTTP ${status}${error.statusText ? ` ${error.statusText}` : ""}). That points to the website's setup, not to what you typed. ${OWNER_HINT}`;
+  }
+  return fallback;
 }
 
 /** Path prefixes that need a signed-in user. Mirrors proxy.ts */

@@ -8,7 +8,7 @@ import { GoogleButton, IconInput, OrDivider, PasswordChecklist, PasswordInput, S
 import { Avatar, Field } from "@/components/ui/kit";
 import { authClient } from "@/lib/auth-client";
 import { check, emailSchema, nameSchema, passwordError, photoSchema, type FieldErrors } from "@/lib/validation";
-import { authErrorMessage, safeNext } from "@/lib/utils";
+import { authErrorMessage, NETWORK_MESSAGE, safeNext, toastMs } from "@/lib/utils";
 
 type Key = "name" | "email" | "photo" | "password";
 
@@ -49,11 +49,19 @@ function RegisterForm() {
       return;
     }
     setBusy(true);
-    const { error } = await authClient.signUp.email({ name: form.name.trim(), email: form.email.trim(), password: form.password, ...(form.photo.trim() ? { image: form.photo.trim() } : {}) });
+    const attempt = await authClient.signUp.email({ name: form.name.trim(), email: form.email.trim(), password: form.password, ...(form.photo.trim() ? { image: form.photo.trim() } : {}) }).catch(() => null);
+    if (!attempt) {
+      // The request never got an answer: offline, blocked, or the address is wrong
+      setBusy(false);
+      toast.error(NETWORK_MESSAGE, { duration: toastMs(NETWORK_MESSAGE) });
+      return;
+    }
+    const { error } = attempt;
     if (error) {
       setBusy(false);
       if (/already exists/i.test(error.message ?? "")) setErrors((er) => ({ ...er, email: "This email already has an account. Log in instead." }));
-      toast.error(authErrorMessage(error, "We could not create your account"));
+      const message = authErrorMessage(error, "We could not create your account");
+      toast.error(message, { duration: toastMs(message) });
       return;
     }
     toast.success("Account created. Please log in to continue.");

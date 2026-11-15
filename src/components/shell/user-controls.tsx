@@ -11,9 +11,10 @@ import { Avatar } from "@/components/ui/kit";
 import { useAction, useGet, send } from "@/hooks/use-api";
 import { clearToken } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
+import { flash } from "@/lib/flash";
 import type { SessionUser } from "@/lib/session";
 import type { AppNotification } from "@/lib/types";
-import { cn, timeAgo } from "@/lib/utils";
+import { authErrorMessage, cn, NETWORK_MESSAGE, timeAgo } from "@/lib/utils";
 
 function useDismiss(open: boolean, close: () => void) {
   const ref = useRef<HTMLDivElement>(null);
@@ -108,17 +109,20 @@ export function NotificationBell() {
 export function UserMenu({ user }: { user: SessionUser }) {
   const [open, setOpen] = useState(false);
   const ref = useDismiss(open, () => setOpen(false));
-  const router = useRouter();
   const qc = useQueryClient();
 
   async function signOut() {
     setOpen(false);
-    await authClient.signOut();
+    const attempt = await authClient.signOut().catch(() => null);
+    if (!attempt || attempt.error) {
+      toast.error(attempt?.error ? authErrorMessage(attempt.error, "We could not sign you out. Please try again.") : NETWORK_MESSAGE);
+      return;
+    }
     clearToken();
     qc.clear();
-    toast.success("You are signed out");
-    router.replace("/");
-    router.refresh();
+    // Load the Home page in full: the browser still holds pages and pre-loaded links from the time you were signed in.
+    flash("You are signed out");
+    window.location.replace("/");
   }
 
   const item = "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:bg-base-200";

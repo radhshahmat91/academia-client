@@ -44,14 +44,15 @@ export function describeProbe(p: Pick<Probe, "status" | "code" | "message" | "er
 
 /**
  * One sentence about the login service, or null when it looks fine.
- * `inside` is the made-up login handed straight to the service, `outside` the same login sent to the website's public address.
+ * `inside` is the made-up login handed straight to the service, `outside` the same login sent to the website's public address
+ * (null when that address was not called).
  */
-export function loginServiceVerdict(inside: Probe, outside: Probe): string | null {
+export function loginServiceVerdict(inside: Probe, outside: Probe | null): string | null {
   if (!inside.looksRight) {
     return `The login service fails its own test (${describeProbe(inside)}). Check MONGODB_URI, MONGODB_DB and BETTER_AUTH_SECRET, then redeploy.`;
   }
-  // The server could not call its own public address at all: only a hint, so it does not decide the verdict
-  if (outside.status === 0 || outside.looksRight) return null;
+  // The server did not call its own public address, or could not reach it at all: only a hint, so it does not decide the verdict
+  if (!outside || outside.status === 0 || outside.looksRight) return null;
   if (outside.status === 404) {
     return "The login service works inside the server, but the website's public address answers HTTP 404 for /api/auth/sign-in/email. The file src/app/api/auth/[...all]/route.ts is missing from what was deployed. Make sure it is in the repository, then redeploy.";
   }

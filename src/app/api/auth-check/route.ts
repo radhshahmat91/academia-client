@@ -74,15 +74,23 @@ export async function GET() {
     database.error = say(e);
   }
 
-  // The login service itself: the made-up login handed straight to it, and the same one sent to the website's public address
+  const secretSet = !!process.env.BETTER_AUTH_SECRET;
+  // The address this page was opened at, as the website itself has it written down. Only that written-down address is ever
+  // called below, never text that merely arrived in a request header.
+  const knownAddress = trusted.map((o) => o.replace(/\/+$/, "")).find((o) => o === openedAt);
+  const addressTrusted = !!knownAddress;
+
+  // The login service itself: a made-up login handed straight to it, and the same one sent to the website's public address
+  // the way a browser sends it (with the Origin header; without it the service rightly refuses a request that looks like a browser's)
   const [inside, outside] = await Promise.all([
     probe("inside the server", () => auth.handler(new Request(`${openedAt}${LOGIN_PATH}`, { method: "POST", headers: { "content-type": "application/json" }, body: MADE_UP_LOGIN }))),
-    probe("through the website's public address", () => fetch(`${openedAt}${LOGIN_PATH}`, { method: "POST", headers: { "content-type": "application/json" }, body: MADE_UP_LOGIN, cache: "no-store", redirect: "manual", signal: AbortSignal.timeout(8000) })),
+    knownAddress
+      ? probe("through the website's public address", () =>
+          fetch(`${knownAddress}${LOGIN_PATH}`, { method: "POST", headers: { "content-type": "application/json", origin: knownAddress }, body: MADE_UP_LOGIN, cache: "no-store", redirect: "manual", signal: AbortSignal.timeout(8000) }),
+        )
+      : Promise.resolve(null),
   ]);
   const serviceVerdict = database.reachable ? loginServiceVerdict(inside, outside) : null;
-
-  const secretSet = !!process.env.BETTER_AUTH_SECRET;
-  const addressTrusted = trusted.some((o) => o.replace(/\/+$/, "") === openedAt);
 
   let verdict: string;
   if (!secretSet) verdict = "BETTER_AUTH_SECRET is missing on this server. Add it in the website's environment variables and redeploy.";

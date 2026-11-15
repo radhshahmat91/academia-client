@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { PasswordChecklist, PasswordInput, SubmitButton } from "@/components/auth/parts";
 import { Field } from "@/components/ui/kit";
 import { authClient } from "@/lib/auth-client";
-import { authErrorMessage } from "@/lib/utils";
+import { authErrorMessage, NETWORK_MESSAGE, toastMs } from "@/lib/utils";
 import { passwordError } from "@/lib/validation";
 
 function ResetForm() {
@@ -41,10 +41,11 @@ function ResetForm() {
     setErrors(found);
     if (found.password || found.confirm) return;
     setBusy(true);
-    const { error } = await authClient.resetPassword({ newPassword: password, token: token! });
-    if (error) {
+    const attempt = await authClient.resetPassword({ newPassword: password, token: token! }).catch(() => null);
+    if (!attempt || attempt.error) {
       setBusy(false);
-      toast.error(authErrorMessage(error, "We could not change your password. The link may have expired."));
+      const message = attempt?.error ? authErrorMessage(attempt.error, "We could not change your password. The link may have expired.") : NETWORK_MESSAGE;
+      toast.error(message, { duration: toastMs(message) });
       return;
     }
     toast.success("Password changed. Log in with your new password.");

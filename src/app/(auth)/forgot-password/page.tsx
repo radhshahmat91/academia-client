@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { IconInput, SubmitButton } from "@/components/auth/parts";
 import { Field } from "@/components/ui/kit";
 import { authClient } from "@/lib/auth-client";
-import { authErrorMessage } from "@/lib/utils";
+import { authErrorMessage, NETWORK_MESSAGE, toastMs } from "@/lib/utils";
 import { check, emailSchema } from "@/lib/validation";
 
 export default function ForgotPasswordPage() {
@@ -22,10 +22,11 @@ export default function ForgotPasswordPage() {
     setError(found);
     if (found) return;
     setBusy(true);
-    const { error: err } = await authClient.requestPasswordReset({ email: email.trim(), redirectTo: "/reset-password" });
+    const attempt = await authClient.requestPasswordReset({ email: email.trim(), redirectTo: "/reset-password" }).catch(() => null);
     setBusy(false);
-    if (err) {
-      toast.error(authErrorMessage(err, "We could not send the reset link. Please try again."));
+    if (!attempt || attempt.error) {
+      const message = attempt?.error ? authErrorMessage(attempt.error, "We could not send the reset link. Please try again.") : NETWORK_MESSAGE;
+      toast.error(message, { duration: toastMs(message) });
       return;
     }
     setSent(true);

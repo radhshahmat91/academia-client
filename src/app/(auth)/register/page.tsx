@@ -8,7 +8,7 @@ import { GoogleButton, IconInput, OrDivider, PasswordChecklist, PasswordInput, S
 import { Avatar, Field } from "@/components/ui/kit";
 import { authClient } from "@/lib/auth-client";
 import { check, emailSchema, nameSchema, passwordError, photoSchema, type FieldErrors } from "@/lib/validation";
-import { authErrorMessage, NETWORK_MESSAGE, safeNext, toastMs } from "@/lib/utils";
+import { authErrorMessage, EMPTY_ANSWER_MESSAGE, NETWORK_MESSAGE, safeNext, toastMs } from "@/lib/utils";
 
 type Key = "name" | "email" | "photo" | "password";
 
@@ -56,11 +56,12 @@ function RegisterForm() {
       toast.error(NETWORK_MESSAGE, { duration: toastMs(NETWORK_MESSAGE) });
       return;
     }
-    const { error } = attempt;
-    if (error) {
+    const { data, error } = attempt;
+    // A real sign-up always comes back with the new user. An answer without one is not a success, whatever its status says.
+    if (error || !data?.user) {
       setBusy(false);
-      if (/already exists/i.test(error.message ?? "")) setErrors((er) => ({ ...er, email: "This email already has an account. Log in instead." }));
-      const message = authErrorMessage(error, "We could not create your account");
+      if (error && /already exists/i.test(error.message ?? "")) setErrors((er) => ({ ...er, email: "This email already has an account. Log in instead." }));
+      const message = error ? authErrorMessage(error, "We could not create your account") : EMPTY_ANSWER_MESSAGE;
       toast.error(message, { duration: toastMs(message) });
       return;
     }

@@ -322,7 +322,7 @@ export function CtaBand({ signedIn }: { signedIn: boolean }) {
           <Photo src={photo("hero-graduation", 1400)} alt="Graduates celebrating" ratio="absolute inset-0" className="-z-20 opacity-25 mix-blend-luminosity" />
           <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary via-primary/90 to-[#06382a]" />
           <ShaplaPattern className="-z-10 text-white/[0.07]" size={110} />
-          <p className="bangla text-2xl font-bold text-secondary sm:text-3xl">সবকিছু এক জায়গায়</p>
+          <p className="bangla text-2xl font-bold text-secondary sm:text-3xl">AcademiaConnect</p>
           <h2 className="display mx-auto mt-3 max-w-2xl text-4xl text-white sm:text-5xl">{signedIn ? "Pick up where you left off." : "Ready to join your university online?"}</h2>
           <p className="mx-auto mt-4 max-w-xl text-lg text-primary-content/85">{signedIn ? "Your courses, messages and fees are waiting on the dashboard." : "Create a free account in under a minute and register for your next semester."}</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">

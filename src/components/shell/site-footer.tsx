@@ -50,7 +50,7 @@ export function SiteFooter() {
       <div className="wrap relative grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div className="max-w-sm">
           <Logo className="[&_span]:text-neutral-content [&_span.text-primary]:text-secondary" />
-          <p className="bangla mt-5 text-xl font-semibold text-secondary">সবকিছু এক জায়গায়</p>
+          <p className="bangla mt-5 text-xl font-semibold text-secondary">Everything in One Place</p>
           <p className="mt-2 text-neutral-content/75">Courses, clubs, events, messages, registration and fees for every student, in one calm place.</p>
           <ul className="mt-6 flex gap-2.5">
             {socials.map(({ icon: Icon, label, href }) => (

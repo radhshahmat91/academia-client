@@ -31,7 +31,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
         <div className="relative flex h-full flex-col justify-between p-12">
           <Logo className="[&_span]:text-white [&_span.text-primary]:text-secondary" />
           <div>
-            <p className="bangla text-5xl font-bold text-secondary">সবকিছু এক জায়গায়</p>
+            <p className="bangla text-5xl font-bold text-secondary">University Management System</p>
             <h2 className="display mt-4 max-w-md text-4xl text-white">Your whole university, one calm place.</h2>
             <ul className="mt-8 grid gap-4">
               {points.map(({ icon: Icon, text }) => (

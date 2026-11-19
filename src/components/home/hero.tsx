@@ -66,7 +66,6 @@ export function Hero({ signedIn }: { signedIn: boolean }) {
         <div>
           <motion.span className="mb-5 block h-[3px] w-full max-w-md origin-left rounded-full bg-gradient-to-r from-secondary from-[56px] to-base-content/15 to-[56px]" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, ease }} />
           <motion.p className="bangla text-3xl font-bold text-primary sm:text-4xl dark:text-secondary" initial={reduce ? false : { clipPath: "inset(0 100% 0 0)" }} animate={{ clipPath: "inset(0 0% 0 0)" }} transition={{ delay: 0.15, duration: 0.9, ease }}>
-            সবকিছু এক জায়গায়
           </motion.p>
           <h1 className="display mt-4 text-[2.9rem] sm:text-6xl xl:text-[4.6rem]" aria-label={HEADLINE.join(" ")}>
             {HEADLINE.map((w, i) => (
